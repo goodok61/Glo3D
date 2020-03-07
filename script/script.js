@@ -43,5 +43,65 @@ window.addEventListener('DOMContentLoaded', function () {
   }
 
   countTimer('01 july 2020');
-  // setInterval(countTimer, 1000, "20 may 2020");
+
+  const toogleMenu = () => {
+    const btnMenu = document.querySelector('.menu'),
+      menu = document.querySelector('menu'),
+      closeBtn = document.querySelector('.close-btn'),
+      menuItems = menu.querySelectorAll('ul>li>a');
+
+    const handlerMenu = () => menu.classList.toggle('active-menu');
+    btnMenu.addEventListener('click', handlerMenu);
+    closeBtn.addEventListener("click", handlerMenu);
+
+    menuItems.forEach((elem) => elem.addEventListener('click', handlerMenu));
+  }
+  toogleMenu();
+
+  //popup
+
+  const tooglePopUp = () => {
+    const popup = document.querySelector(".popup"),
+      popupBtn = document.querySelectorAll(".popup-btn"),
+      popUpClose = document.querySelector(".popup-close"),
+      popUpContent = document.querySelector(".popup-content");
+      
+      popupBtn.forEach((elem) => elem.addEventListener('click', () =>{
+        popup.style.display = "block";
+        popUpContent.style.opacity = "0";
+        
+        animate({
+          duration: 1000,
+          timing: function(timeFraction) {
+            return timeFraction;
+          },
+          draw: function(progress) {
+            let progressPopup = Math.floor(progress * 100) / 100;
+            popUpContent.style.opacity = `${progressPopup}`;                    
+          }
+        });
+      
+      }));
+      popUpClose.addEventListener('click', () => popup.style.display = "none");
+    function animate({ timing, draw, duration }) {
+      let start = performance.now();
+
+      requestAnimationFrame(function animate(time) {
+        // timeFraction изменяется от 0 до 1
+        let timeFraction = (time - start) / duration;
+        if (timeFraction > 1) timeFraction = 1;
+
+        // вычисление текущего состояния анимации
+        let progress = timing(timeFraction);
+
+        draw(progress); // отрисовать её
+
+        if (timeFraction < 1) {
+          requestAnimationFrame(animate);
+        }
+      });
+    }
+  };
+tooglePopUp();
+
 });
