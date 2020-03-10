@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', function () {
         timeRemaining = (dateStop - dateNow) / 1000,
         seconds = Math.floor(timeRemaining % 60),
         minutes = Math.floor((timeRemaining / 60) % 60),
-        hours = Math.floor(timeRemaining / 60 / 60);   
+        hours = Math.floor(timeRemaining / 60 / 60);
       return {
         timeRemaining,
         hours,
@@ -28,21 +28,18 @@ window.addEventListener('DOMContentLoaded', function () {
       timerMinutes.textContent = timer.minutes < 10 ? "0" + timer.minutes : timer.minutes;
       timerSeconds.textContent = timer.seconds < 10 ? "0" + timer.seconds : timer.seconds;
 
-      if (timer.timeRemaining > 0) {
-        setInterval(updateClock, 1000);
-        // setTimeout(updateClock, 1000);
-      } else {
+      if (timer.timeRemaining < 0) {
         timerHours.textContent = '00';
         timerMinutes.textContent = '00';
         timerSeconds.textContent = '00';
       }
     }
 
-    updateClock();
+    setInterval(updateClock, 1000);
 
   }
 
-  countTimer('01 july 2020');
+  countTimer('20 mart 2020');
 
   const toogleMenu = () => {
     const btnMenu = document.querySelector('.menu'),
@@ -65,25 +62,37 @@ window.addEventListener('DOMContentLoaded', function () {
       popupBtn = document.querySelectorAll(".popup-btn"),
       popUpClose = document.querySelector(".popup-close"),
       popUpContent = document.querySelector(".popup-content");
-      
-      popupBtn.forEach((elem) => elem.addEventListener('click', () =>{
-        popup.style.display = "block";
-        popUpContent.style.opacity = "0";
-        
+
+    popupBtn.forEach((elem) => elem.addEventListener('click', () => {
+      popup.style.display = "block";
+      popUpContent.style.opacity = "0";
+
+
+      if (screen.width > 768) {
         animate({
           duration: 1000,
-          timing: function(timeFraction) {
+          timing: function (timeFraction) {
             return timeFraction;
           },
-          draw: function(progress) {
+          draw: function (progress) {
             let progressPopup = Math.floor(progress * 100) / 100;
-            popUpContent.style.opacity = `${progressPopup}`;                    
+            popUpContent.style.opacity = `${progressPopup}`;
           }
         });
-      
-      }));
-      popUpClose.addEventListener('click', () => popup.style.display = "none");
-    function animate({ timing, draw, duration }) {
+      } else {
+        popup.style.display = "block";
+        popUpContent.style.opacity = "1";
+      }
+
+
+    }));
+    popUpClose.addEventListener('click', () => popup.style.display = "none");
+
+    function animate({
+      timing,
+      draw,
+      duration
+    }) {
       let start = performance.now();
 
       requestAnimationFrame(function animate(time) {
@@ -102,6 +111,6 @@ window.addEventListener('DOMContentLoaded', function () {
       });
     }
   };
-tooglePopUp();
+  tooglePopUp();
 
 });
