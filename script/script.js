@@ -263,4 +263,39 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   slider();
+
+  const myTeam = () => {
+    const teamImg = document.querySelectorAll(".command__photo");
+
+    teamImg.forEach( item => {
+      let defaultItemSrc = item.src;      
+      item.addEventListener("mouseenter", event => {
+        event.target.src = event.target.dataset.img;
+      });
+      item.addEventListener("mouseleave", event => {
+        event.target.src = defaultItemSrc;
+      });
+    })
+  }
+  myTeam();
+
+  const calc = () => {
+    const calcBlock = document.querySelector('.calc-block'),
+      calcSquare = document.querySelector('.calc-square'),
+      calcCount = document.querySelector('.calc-count'),
+      calcDay = document.querySelector('.calc-day');
+      
+      calcBlock.addEventListener('input', (e) => {
+        const target = e.target;
+        if (
+          target.closest(".calc-square") ||
+          target.closest(".calc-count") ||
+          target.closest(".calc-day")
+        ) {
+          target.value = target.value.replace(/\D/g, '');
+        }
+      })
+      
+  }
+  calc();
 });
