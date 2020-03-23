@@ -166,20 +166,20 @@ window.addEventListener('DOMContentLoaded', () => {
     const slide = document.querySelectorAll('.portfolio-item'),
       btn = document.querySelectorAll('.portfolio-btn'),
       slider = document.querySelector('.portfolio-content'),
-      
+
       dots = document.createElement("ul");
-      dots.classList.add("portfolio-dots");
-      slider.append(dots);
-      for (let i = 0; i < slide.length; i++) {
-        const oneDot = document.createElement("li");
-        oneDot.classList.add("dot");
-        dots.append(oneDot);
-        if (i == 0) {
-          oneDot.classList.add("dot-active");
-        }
+    dots.classList.add("portfolio-dots");
+    slider.append(dots);
+    for (let i = 0; i < slide.length; i++) {
+      const oneDot = document.createElement("li");
+      oneDot.classList.add("dot");
+      dots.append(oneDot);
+      if (i == 0) {
+        oneDot.classList.add("dot-active");
       }
+    }
     const dot = document.querySelectorAll('.dot');
-      
+
     let curentSlide = 0,
       interval;
 
@@ -229,12 +229,12 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log(slide.length);
       } else if (target.matches('.dot')) {
         dot.forEach((elem, index) => {
-          if (elem === target){
+          if (elem === target) {
             curentSlide = index;
           };
         });
       };
-      
+
       if (curentSlide >= slide.length) {
         curentSlide = 0;
       }
@@ -267,8 +267,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const myTeam = () => {
     const teamImg = document.querySelectorAll(".command__photo");
 
-    teamImg.forEach( item => {
-      let defaultItemSrc = item.src;      
+    teamImg.forEach(item => {
+      let defaultItemSrc = item.src;
       item.addEventListener("mouseenter", event => {
         event.target.src = event.target.dataset.img;
       });
@@ -279,23 +279,61 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   myTeam();
 
-  const calc = () => {
+  const calc = (price = 100) => {
     const calcBlock = document.querySelector('.calc-block'),
+      calcType = document.querySelector('.calc-type'),
       calcSquare = document.querySelector('.calc-square'),
       calcCount = document.querySelector('.calc-count'),
-      calcDay = document.querySelector('.calc-day');
-      
-      calcBlock.addEventListener('input', (e) => {
-        const target = e.target;
-        if (
-          target.closest(".calc-square") ||
-          target.closest(".calc-count") ||
-          target.closest(".calc-day")
-        ) {
-          target.value = target.value.replace(/\D/g, '');
-        }
-      })
-      
+      calcDay = document.querySelector('.calc-day'),
+      totalValue = document.getElementById('total');
+
+    const countSum = () => {
+
+      let total = 0,
+        countValue = 1,
+        dayValue = 1;
+      const typeValue = calcType.options[calcType.selectedIndex].value,
+        squareValue = +calcSquare.value;
+
+      if (calcCount.value > 1) {
+        countValue += (calcCount.value - 1) / 10;
+      }
+
+      if (calcDay.value && calcDay.value < 5) {
+        dayValue *= 2;
+      } else if (calcDay.value && calcDay.value < 10) {
+        dayValue *= 1.5;
+      }
+
+      if (typeValue && squareValue) {
+        total = price * typeValue * squareValue * countValue * dayValue;
+      }
+
+      totalValue.textContent = total;
+
+    }
+
+    calcBlock.addEventListener('input', event => {
+      const target = event.target;
+
+      if (target.matches('select') || target.matches('input')) {
+        countSum();
+      }
+    })
+
+
+
+    calcBlock.addEventListener('input', (e) => {
+      const target = e.target;
+      if (
+        target.closest(".calc-square") ||
+        target.closest(".calc-count") ||
+        target.closest(".calc-day")
+      ) {
+        target.value = target.value.replace(/\D/g, '');
+      }
+    })
+
   }
-  calc();
+  calc(100);
 });
