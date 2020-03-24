@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
     setInterval(updateClock, 1000);
 
   }
-  countTimer('20 march 2020');
+  countTimer('20 april 2020');
 
   const toogleMenu = () => {
     const btnMenu = document.querySelector('.menu'),
@@ -309,7 +309,7 @@ window.addEventListener('DOMContentLoaded', () => {
         total = price * typeValue * squareValue * countValue * dayValue;
       }
 
-      totalValue.textContent = total;
+      totalValue.textContent = Math.ceil(total);
 
     }
 
@@ -337,3 +337,120 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   calc(100);
 });
+
+//send-ajax-form
+
+const sendForm = () => {
+
+  const errorMessage = ' Что то пошло не так...',
+    loadMessage = 'Загрузка...',
+    successMessage = 'Спасибо! Мы скоро с вами свяжемся!',
+    statusMessage = document.createElement('div');
+  statusMessage.style.cssText = 'font-size: 2rem;';
+
+  const allForms = document.querySelectorAll('form');
+  allForms.forEach(item => {
+    item.addEventListener("submit", event => {
+      event.preventDefault();
+      item.appendChild(statusMessage);
+      statusMessage.textContent = loadMessage;
+      if (item.getAttribute("id") == 'form3') {
+        statusMessage.style.cssText = 'color:#ffffff';
+      }
+      const formData = new FormData(item);
+      let body = {};
+      formData.forEach((val, key) => {
+        body[key] = val;
+      });
+
+      postData(
+        body,
+        () => {
+          statusMessage.textContent = successMessage;
+        },
+        error => {
+          statusMessage.textContent = errorMessage;
+          console.error(error);
+        }
+      );
+      const inputs = item.querySelectorAll('input');
+      inputs.forEach(item => {
+        item.value = '';
+      })
+
+      inputs.addEventListener("input", e => {
+        const target = e.target;
+        
+
+        if (target.getAttribute("name") == "user_name" || target.getAttribute("name") == "user_message") {
+          target.value = target.value.replace(/[а-яё]{1,}/gi, "");
+        } else if (target.getAttribute("name") == "user_email") {
+          target.value = target.value.replace(/^\w{1,}@\D{1,}.\D{2,3}/g, "");
+        } else if (target.getAttribute("name") == "user_phone") {
+          target.value = target.value.replace(/^\+?[0-9]{1,}/g, "");
+        };
+      });
+    });
+
+  })
+
+
+
+
+
+  const postData = (body, outputData, errorData) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener("readystatechange", () => {
+
+      if (request.readyState !== 4) {
+        return;
+      }
+      if (request.status === 200) {
+        outputData();
+      } else {
+        errorData(request.status);
+      }
+    });
+
+    request.open("POST", "./server.php");
+    request.setRequestHeader("Content-Type", "application/json");
+
+
+    request.send(JSON.stringify(body));
+  }
+
+}
+sendForm();
+
+//Валидация форм (23 урок)
+
+/*const valid1 = new Validator({
+  selector: "#form1",
+  pattern: {},
+  method: {
+    "form1-name": [["notEmpty"], ["pattern", "name"]],
+    "form1-email": [["notEmpty"], ["pattern", "email"]],
+    "form1-phone": [["notEmpty"], ["pattern", "phone"]]
+  }
+});
+
+const valid2 = new Validator({
+  selector: "#form2",
+  pattern: {},
+  method: {
+    "form2-name": [["notEmpty"], ["pattern", "name"]],
+    "form2-email": [["notEmpty"], ["pattern", "email"]],
+    "form2-phone": [["notEmpty"], ["pattern", "phone"]],
+    "form2-message": [["notEmpty"], ["pattern", "ruText"]]
+  }
+});
+
+const valid3 = new Validator({
+  selector: "#form3",
+  pattern: {},
+  method: {
+    "form3-name": [["notEmpty"], ["pattern", "name"]],
+    "form3-email": [["notEmpty"], ["pattern", "email"]],
+    "form3-phone": [["notEmpty"], ["pattern", "phone"]]
+  }
+});*/
