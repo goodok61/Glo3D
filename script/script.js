@@ -178,7 +178,7 @@ window.addEventListener('DOMContentLoaded', () => {
         oneDot.classList.add("dot-active");
       }
     }
-    const dot = document.querySelectorAll('.dot');
+    let dot = document.querySelectorAll('.dot');
 
     let curentSlide = 0,
       interval;
@@ -214,10 +214,10 @@ window.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       let target = event.target;
-
-      if (!target.matches(".portfolio-btn", ".dot")) {
-        return
-      }
+      
+      // if (!target.matches(".portfolio-btn", ".dot")) {
+      //   return;
+      // }
 
       prevSlide(slide, curentSlide, "portfolio-item-active");
       prevSlide(dot, curentSlide, "dot-active");
@@ -226,14 +226,15 @@ window.addEventListener('DOMContentLoaded', () => {
         curentSlide++;
       } else if (target.matches('#arrow-left')) {
         curentSlide--;
-        console.log(slide.length);
-      } else if (target.matches('.dot')) {
+      } else if (target.classList.contains('dot')) {        
         dot.forEach((elem, index) => {
           if (elem === target) {
             curentSlide = index;
           };
         });
       };
+      
+      
 
       if (curentSlide >= slide.length) {
         curentSlide = 0;
@@ -373,25 +374,28 @@ const sendForm = () => {
           console.error(error);
         }
       );
-      const inputs = item.querySelectorAll('input');
-      inputs.forEach(item => {
-        item.value = '';
-      })
+      
 
-      inputs.addEventListener("input", e => {
+      
+    });
+    const inputs = item.querySelectorAll("input");
+    inputs.forEach(itemInput => {
+      itemInput.value = "";
+      itemInput.addEventListener("input", e => {
         const target = e.target;
-        
 
-        if (target.getAttribute("name") == "user_name" || target.getAttribute("name") == "user_message") {
-          target.value = target.value.replace(/[а-яё]{1,}/gi, "");
+        if (
+          target.getAttribute("name") == "user_name" ||
+          target.getAttribute("name") == "user_message"
+        ) {
+          target.value = target.value.replace(/[^\W]/gi, "");
         } else if (target.getAttribute("name") == "user_email") {
-          target.value = target.value.replace(/^\w{1,}@\D{1,}.\D{2,3}/g, "");
+          target.value = target.value.replace(/.+@.+\..{1,}&/i, "");
         } else if (target.getAttribute("name") == "user_phone") {
-          target.value = target.value.replace(/^\+?[0-9]{1,}/g, "");
-        };
+          target.value = target.value.replace(/\+\D{1,15}/g, "");
+        }
       });
     });
-
   })
 
 
