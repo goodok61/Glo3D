@@ -214,7 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       let target = event.target;
-      
+
       // if (!target.matches(".portfolio-btn", ".dot")) {
       //   return;
       // }
@@ -226,15 +226,15 @@ window.addEventListener('DOMContentLoaded', () => {
         curentSlide++;
       } else if (target.matches('#arrow-left')) {
         curentSlide--;
-      } else if (target.classList.contains('dot')) {        
+      } else if (target.classList.contains('dot')) {
         dot.forEach((elem, index) => {
           if (elem === target) {
             curentSlide = index;
           };
         });
       };
-      
-      
+
+
 
       if (curentSlide >= slide.length) {
         curentSlide = 0;
@@ -349,8 +349,35 @@ const sendForm = () => {
     statusMessage = document.createElement('div');
   statusMessage.style.cssText = 'font-size: 2rem;';
 
+
   const allForms = document.querySelectorAll('form');
+
+
+  const postData = (body) => {
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest();
+      request.addEventListener("readystatechange", () => {
+        if (request.readyState !== 4) {
+          return;
+        }
+        if (request.status === 200) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+
+      request.open("POST", "./server.php");
+      request.setRequestHeader("Content-Type", "application/json");
+
+      request.send(JSON.stringify(body));
+    });
+  };
+
+
+
   allForms.forEach(item => {
+    const inputs = item.querySelectorAll("input");
     item.addEventListener("submit", event => {
       event.preventDefault();
       item.appendChild(statusMessage);
@@ -363,22 +390,18 @@ const sendForm = () => {
       formData.forEach((val, key) => {
         body[key] = val;
       });
-
-      postData(
-        body,
-        () => {
+      postData(body)
+        .then(() => {
           statusMessage.textContent = successMessage;
-        },
-        error => {
+          inputs.forEach(itemInput => (itemInput.value = ""));
+        })
+        .catch(()=>{
           statusMessage.textContent = errorMessage;
-          console.error(error);
-        }
-      );
-      
+        });
+     
 
-      
+
     });
-    const inputs = item.querySelectorAll("input");
     inputs.forEach(itemInput => {
       itemInput.value = "";
       itemInput.addEventListener("input", e => {
@@ -392,36 +415,13 @@ const sendForm = () => {
         } else if (target.getAttribute("name") == "user_email") {
           target.value = target.value.replace(/.+@.+\..{1,}&/i, "");
         } else if (target.getAttribute("name") == "user_phone") {
-          target.value = target.value.replace(/\+\D{1,15}/g, "");
+          target.value = target.value.replace(/\+[\d]/g, "");
         }
       });
     });
   })
 
 
-
-
-
-  const postData = (body, outputData, errorData) => {
-    const request = new XMLHttpRequest();
-    request.addEventListener("readystatechange", () => {
-
-      if (request.readyState !== 4) {
-        return;
-      }
-      if (request.status === 200) {
-        outputData();
-      } else {
-        errorData(request.status);
-      }
-    });
-
-    request.open("POST", "./server.php");
-    request.setRequestHeader("Content-Type", "application/json");
-
-
-    request.send(JSON.stringify(body));
-  }
 
 }
 sendForm();
